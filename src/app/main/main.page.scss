@@ -1,0 +1,30 @@
+.contentainer {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 6vh;
+}
+
+.rule {
+    margin-top: 4vh;
+}
+.equation {
+    text-align: center;
+}
+
+#answer {
+    text-align: center;
+}
+
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+  }
+

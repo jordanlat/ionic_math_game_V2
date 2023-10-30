@@ -4,13 +4,25 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <div>
-    <ion-title size="large">Math Game</ion-title>
+<ion-content [fullscreen]="true" class="ion_content">
+  <div class="contentainer">
+    <div>
+      <ion-title size="large"> <h1>Math Game</h1></ion-title>
+    </div>
+  
+    <div class="rule">
+      <p>Résolvez le plus d'équation</p>
+    </div>
+
+    <div class="game">
+      <div class="equation">
+        <p>2+2</p>
+      </div>
+      <div class="input">
+        <input type="number" name="answer" id="answer" autofocus>
+      </div> 
+    </div>
   </div>
 
-  <container>
-    <p>Résolvez le plus d'équation</p>
-  </container>
   
 </ion-content>
