@@ -16,10 +16,13 @@
 
     <div class="game">
       <div class="equation">
-        <p>2+2</p>
+        <p id="equation">2+2</p>
       </div>
       <div class="input">
-        <input type="number" name="answer" id="answer" autofocus>
+        <form [formGroup]="inpForm" (ngSubmit)="onSubmit()" action="" id="form" >
+          <input type="number" formControlName="inpValue" id="inpValue" autofocus required>
+          <input type="submit" value="enter" hidden>
+        </form>
       </div> 
     </div>
   </div>
