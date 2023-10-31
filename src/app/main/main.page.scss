@@ -28,3 +28,16 @@ input[type=number] {
     -moz-appearance: textfield;
   }
 
+.row {
+    display: flex;
+    flex-direction: row;
+}
+
+.row ion-item {
+    margin-left: 2vw;
+
+}
+
+.time{
+    margin-left: 2vw;
+}

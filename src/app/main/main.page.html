@@ -7,32 +7,39 @@
 <ion-content [fullscreen]="true" class="ion_content">
   <div class="contentainer">
     <div>
-      <ion-title size="large"> <h1>Math Game</h1></ion-title>
+      <ion-title size="large">
+        <h1>Math Game</h1>
+      </ion-title>
     </div>
-  
+
     <div class="rule">
       <p>Résolvez le plus d'équation</p>
     </div>
 
-    <div class="game">
-      <div>
-        <ion-item>
-          <ion-label>Temps restant: <b>{{ remainingTime }}</b></ion-label>
-        </ion-item>
-      </div>
-      <div>
+    <div class="game row">
+      <div class="main-equa">
         <div class="equation">
           <p id="equation"></p>
         </div>
         <div class="input">
-          <form [formGroup]="inpForm" (ngSubmit)="onSubmit()" action="" id="form" >
+          <form [formGroup]="inpForm" (ngSubmit)="onSubmit()" action="" id="form">
             <input type="number" formControlName="inpValue" id="inpValue" autofocus required>
             <input type="submit" value="enter" hidden>
           </form>
-        </div> 
+        </div>
+      </div>
+      <div class="compteur">
+        <ion-item>
+          <ion-label>Temps restant:</ion-label>
+          <b><p class="time">{{ remainingTime }}</p></b>
+        </ion-item>
+        <ion-item>
+          <ion-label>Score: </ion-label>
+          <b><p id="score"></p></b>
+        </ion-item>
       </div>
     </div>
   </div>
 
-  
+
 </ion-content>

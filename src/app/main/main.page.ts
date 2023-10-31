@@ -38,6 +38,7 @@ export class MainPage implements OnInit, OnDestroy {
   remainingTime: number = 10;
   counting: boolean = false;
   countdownInterval: any;
+  score: number = 0;
 
   ngOnInit() {
     this.geneEqua();
@@ -55,12 +56,12 @@ export class MainPage implements OnInit, OnDestroy {
       this.check_result(data);
       this.inpForm.reset();
       this.stopCountdown();
-      this.remainingTime = 10;
       this.startCountdown();
     }
   }
 
   startCountdown() {
+    console.log(this.counting);
     if (!this.counting) {
       this.counting = true;
       this.countdownInterval = setInterval(() => {
@@ -76,6 +77,7 @@ export class MainPage implements OnInit, OnDestroy {
   pauseCountdown() {
     clearInterval(this.countdownInterval);
     this.counting = false;
+    console.log("PAUSE");
   }
 
   stopCountdown() {
@@ -85,7 +87,7 @@ export class MainPage implements OnInit, OnDestroy {
   }
 
   geneRandomNumber(max: number) {
-    return Math.floor(Math.random() * max)
+    return Math.floor(Math.random() * (max - 1) + 1);
   }
   
   geneEqua() {
@@ -93,6 +95,12 @@ export class MainPage implements OnInit, OnDestroy {
     Globals.numberTwo = this.geneRandomNumber(10);
     Globals.symbol = this.geneRandomNumber(4);
     const showEqua = document.getElementById('equation');
+    const showScore = document.getElementById('score');
+
+    if(showScore != undefined && showScore != null) {
+      showScore.textContent = this.score.toString();
+    }
+ 
     
     switch(Globals.symbol){
       case 0:
@@ -100,7 +108,7 @@ export class MainPage implements OnInit, OnDestroy {
         Globals.result = Globals.numberOne + Globals.numberTwo;
         
         if (showEqua != undefined && showEqua != null){
-          showEqua.textContent = Globals.numberOne + ' + ' + Globals.numberTwo;
+          showEqua.textContent = Globals.numberOne + ' + ' + Globals.numberTwo + ' = ?';
         }
         
         break;
@@ -109,7 +117,7 @@ export class MainPage implements OnInit, OnDestroy {
         // Soustraction
         Globals.result = Globals.numberOne - Globals.numberTwo;
         if (showEqua != undefined && showEqua != null){
-          showEqua.textContent = Globals.numberOne + ' - ' + Globals.numberTwo;
+          showEqua.textContent = Globals.numberOne + ' - ' + Globals.numberTwo + ' = ?';
         }
         break;
   
@@ -117,7 +125,7 @@ export class MainPage implements OnInit, OnDestroy {
         // Multiplication
         Globals.result = Globals.numberOne * Globals.numberTwo;
         if (showEqua != undefined && showEqua != null){
-          showEqua.textContent = Globals.numberOne + ' * ' + Globals.numberTwo;
+          showEqua.textContent = Globals.numberOne + ' * ' + Globals.numberTwo + ' = ?';
         }
         break;
   
@@ -125,7 +133,7 @@ export class MainPage implements OnInit, OnDestroy {
         // Division
         Globals.result = Globals.numberOne * Globals.numberTwo;
         if (showEqua != undefined && showEqua != null){
-          showEqua.textContent = Globals.result + ' / ' + Globals.numberTwo;
+          showEqua.textContent = Globals.result + ' / ' + Globals.numberTwo + ' = ?';
         }
         break;
       
@@ -133,6 +141,7 @@ export class MainPage implements OnInit, OnDestroy {
         console.log("Error gen Number");
         break;
     }
+    this.startCountdown();
   }
   
   
@@ -141,24 +150,28 @@ export class MainPage implements OnInit, OnDestroy {
     if(Globals.symbol == 3) {
       if(inpValue == Globals.numberOne) {
         console.log("Cooreect");
+        this.score++;
         this.stopCountdown();
         this.geneEqua();
         this.startCountdown();        
       } else {
         console.log("FAUX");
         console.log(Globals.numberOne + " " + Globals.symbol + " " + Globals.numberTwo + " " + Globals.result);
+        this.pauseCountdown();
         this.stopCountdown();
         this.openPseudoModal();
       }
     } else {
       if (inpValue == Globals.result){
         console.log("Cooreect");
+        this.score++;
         this.stopCountdown();
         this.geneEqua();
         this.startCountdown();
       } else {
         console.log("FAUX");
         console.log(Globals.numberOne + " " + Globals.symbol + " " + Globals.numberTwo + " " + Globals.result);
+        this.pauseCountdown();
         this.stopCountdown();
         this.openPseudoModal();
       }
@@ -177,13 +190,13 @@ export class MainPage implements OnInit, OnDestroy {
       modal.onDidDismiss().then((data) => {
         if (data.role === 'ok') {
           const pseudo = data.data.pseudo;
-          this.geneEqua();
+          //this.geneEqua();
           this.stopCountdown();
-          this.startCountdown();
         }
-
-        this.modalService.closeModal();
+        this.score = 0;
         this.router.navigate(['/home']);
+        this.modalService.closeModal();
+        
       });
 
       return await modal.present();
