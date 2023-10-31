@@ -1,0 +1,7 @@
+<ion-content class="ion-padding">
+  <form [formGroup]='nameForm' (ngSubmit)="onSubmit()" id="form" class="container">
+    <label for="">Entrer un Pseudo:</label>
+    <input type='text' formControlName="pseudo">
+    <input type="submit" value="enter" hidden>
+  </form>
+</ion-content>

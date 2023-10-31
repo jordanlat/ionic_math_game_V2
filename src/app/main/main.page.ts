@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ModalController } from '@ionic/angular';
 import { FormBuilder } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ModalComponent, ModalService } from '../modal/modal.component';
+import { Router } from '@angular/router';
 
 
 export class Globals {
@@ -18,95 +20,176 @@ export class Globals {
   templateUrl: './main.page.html',
   styleUrls: ['./main.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, ReactiveFormsModule]
+  imports: [IonicModule, CommonModule, FormsModule, ReactiveFormsModule, ModalComponent]
 })
-export class MainPage implements OnInit {
+export class MainPage implements OnInit, OnDestroy {
+
+  constructor(
+    private formBuilder: FormBuilder,
+    private modalController: ModalController,
+    private modalService: ModalService,
+    private router: Router,
+  ) {}
 
   inpForm = this.formBuilder.group({
     inpValue: 0,
   });
 
-  constructor(
-    private formBuilder: FormBuilder,
-  ) {}
+  remainingTime: number = 10;
+  counting: boolean = false;
+  countdownInterval: any;
 
   ngOnInit() {
-    geneEqua();
+    this.geneEqua();
+    this.startCountdown();
+  }
+  ngOnDestroy(): void {
+    if(this.counting){
+      clearInterval(this.countdownInterval);
+    }
   }
 
   onSubmit(): void {
     const data = this.inpForm.value.inpValue
     if (data != undefined && data != null){
-      check_result(data);
+      this.check_result(data);
       this.inpForm.reset();
+      this.stopCountdown();
+      this.remainingTime = 10;
+      this.startCountdown();
     }
   }
 
-}
+  startCountdown() {
+    if (!this.counting) {
+      this.counting = true;
+      this.countdownInterval = setInterval(() => {
+        this.remainingTime--;
+        if (this.remainingTime === 0) {
+          this.stopCountdown();
+          this.openPseudoModal()
+        }
+      }, 1000);
+    }
+  }
 
-function geneRandomNumber(max: number) {
-  return Math.floor(Math.random() * max)
-}
+  pauseCountdown() {
+    clearInterval(this.countdownInterval);
+    this.counting = false;
+  }
 
-function geneEqua() {
-  Globals.numberOne = geneRandomNumber(20);
-  Globals.numberTwo = geneRandomNumber(10);
-  Globals.symbol = geneRandomNumber(4);
-  const showEqua = document.getElementById('equation');
+  stopCountdown() {
+    clearInterval(this.countdownInterval);
+    this.counting = false;
+    this.remainingTime = 10;
+  }
+
+  geneRandomNumber(max: number) {
+    return Math.floor(Math.random() * max)
+  }
   
-  switch(Globals.symbol){
-    case 0:
-      // Addtion
-      Globals.result = Globals.numberOne + Globals.numberTwo;
-      
-      if (showEqua != undefined && showEqua != null){
-        showEqua.textContent = Globals.numberOne + ' + ' + Globals.numberTwo;
-      }
-      
-      break;
-
-    case 1:
-      // Soustraction
-      Globals.result = Globals.numberOne - Globals.numberTwo;
-      if (showEqua != undefined && showEqua != null){
-        showEqua.textContent = Globals.numberOne + ' - ' + Globals.numberTwo;
-      }
-      break;
-
-    case 2:
-      // Multiplication
-      Globals.result = Globals.numberOne * Globals.numberTwo;
-      if (showEqua != undefined && showEqua != null){
-        showEqua.textContent = Globals.numberOne + ' * ' + Globals.numberTwo;
-      }
-      break;
-
-    case 3:
-      // Division
-      Globals.result = Globals.numberOne * Globals.numberTwo;
-      if (showEqua != undefined && showEqua != null){
-        showEqua.textContent = Globals.result + ' / ' + Globals.numberTwo;
-      }
-      break;
+  geneEqua() {
+    Globals.numberOne = this.geneRandomNumber(20);
+    Globals.numberTwo = this.geneRandomNumber(10);
+    Globals.symbol = this.geneRandomNumber(4);
+    const showEqua = document.getElementById('equation');
     
-    default:
-      console.log("Error gen Number");
-      break;
-  }
-}
-
-
-function check_result(inpValue:number) {
-  console.log(inpValue);
-  console.log(typeof(inpValue));
- 
-  if (inpValue == Globals.result){
-    console.log("Cooreect");
-  } else {
-    console.log("FAUX");
-    console.log(Globals.numberOne + " " + Globals.symbol + " " + Globals.numberTwo + " " + Globals.result);
-  }
-
-  geneEqua();
+    switch(Globals.symbol){
+      case 0:
+        // Addtion
+        Globals.result = Globals.numberOne + Globals.numberTwo;
+        
+        if (showEqua != undefined && showEqua != null){
+          showEqua.textContent = Globals.numberOne + ' + ' + Globals.numberTwo;
+        }
+        
+        break;
   
+      case 1:
+        // Soustraction
+        Globals.result = Globals.numberOne - Globals.numberTwo;
+        if (showEqua != undefined && showEqua != null){
+          showEqua.textContent = Globals.numberOne + ' - ' + Globals.numberTwo;
+        }
+        break;
+  
+      case 2:
+        // Multiplication
+        Globals.result = Globals.numberOne * Globals.numberTwo;
+        if (showEqua != undefined && showEqua != null){
+          showEqua.textContent = Globals.numberOne + ' * ' + Globals.numberTwo;
+        }
+        break;
+  
+      case 3:
+        // Division
+        Globals.result = Globals.numberOne * Globals.numberTwo;
+        if (showEqua != undefined && showEqua != null){
+          showEqua.textContent = Globals.result + ' / ' + Globals.numberTwo;
+        }
+        break;
+      
+      default:
+        console.log("Error gen Number");
+        break;
+    }
+  }
+  
+  
+  check_result(inpValue:number) {
+
+    if(Globals.symbol == 3) {
+      if(inpValue == Globals.numberOne) {
+        console.log("Cooreect");
+        this.stopCountdown();
+        this.geneEqua();
+        this.startCountdown();        
+      } else {
+        console.log("FAUX");
+        console.log(Globals.numberOne + " " + Globals.symbol + " " + Globals.numberTwo + " " + Globals.result);
+        this.stopCountdown();
+        this.openPseudoModal();
+      }
+    } else {
+      if (inpValue == Globals.result){
+        console.log("Cooreect");
+        this.stopCountdown();
+        this.geneEqua();
+        this.startCountdown();
+      } else {
+        console.log("FAUX");
+        console.log(Globals.numberOne + " " + Globals.symbol + " " + Globals.numberTwo + " " + Globals.result);
+        this.stopCountdown();
+        this.openPseudoModal();
+      }
+    }
+  }
+
+  async openPseudoModal() {
+    if (!this.modalService.isModalOpen()) {
+      this.modalService.openModal();
+
+      const modal = await this.modalController.create({
+        component: ModalComponent,
+        componentProps: {},
+      });
+
+      modal.onDidDismiss().then((data) => {
+        if (data.role === 'ok') {
+          const pseudo = data.data.pseudo;
+          this.geneEqua();
+          this.stopCountdown();
+          this.startCountdown();
+        }
+
+        this.modalService.closeModal();
+        this.router.navigate(['/home']);
+      });
+
+      return await modal.present();
+    }
+  }
 }
+
+
+

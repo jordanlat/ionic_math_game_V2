@@ -15,15 +15,22 @@
     </div>
 
     <div class="game">
-      <div class="equation">
-        <p id="equation">2+2</p>
+      <div>
+        <ion-item>
+          <ion-label>Temps restant: <b>{{ remainingTime }}</b></ion-label>
+        </ion-item>
       </div>
-      <div class="input">
-        <form [formGroup]="inpForm" (ngSubmit)="onSubmit()" action="" id="form" >
-          <input type="number" formControlName="inpValue" id="inpValue" autofocus required>
-          <input type="submit" value="enter" hidden>
-        </form>
-      </div> 
+      <div>
+        <div class="equation">
+          <p id="equation"></p>
+        </div>
+        <div class="input">
+          <form [formGroup]="inpForm" (ngSubmit)="onSubmit()" action="" id="form" >
+            <input type="number" formControlName="inpValue" id="inpValue" autofocus required>
+            <input type="submit" value="enter" hidden>
+          </form>
+        </div> 
+      </div>
     </div>
   </div>
 
